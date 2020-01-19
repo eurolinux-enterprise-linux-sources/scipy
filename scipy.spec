@@ -8,7 +8,7 @@
 Summary: Scipy: Scientific Tools for Python
 Name: scipy
 Version: 0.12.1
-Release: 3%{?dist}
+Release: 6%{?dist}
 
 Group: Development/Libraries
 # BSD -- whole package except:
@@ -27,7 +27,7 @@ BuildRequires: numpy, python2-devel,f2py
 BuildRequires: python-six
 BuildRequires: fftw-devel, blas-devel, lapack-devel, suitesparse-devel
 BuildRequires: atlas-devel
-BuildRequires: gcc-gfortran, swig
+BuildRequires: gcc-gfortran, gcc-c++, swig
 Requires: numpy, python,f2py
 Requires: python-six
 
@@ -102,11 +102,11 @@ cp -a . %{py3dir}
 %build
 %if 0%{?with_python3}
 pushd %{py3dir}
-env CFLAGS="$RPM_OPT_FLAGS" ATLAS=%{_libdir}/atlas FFTW=%{_libdir} BLAS=%{_libdir} LAPACK=%{_libdir} python3 setup.py config_fc --fcompiler=gnu95 --noarch build
+env CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-Wall -shared $RPM_LD_FLAGS" ATLAS=%{_libdir}/atlas FFTW=%{_libdir} BLAS=%{_libdir} LAPACK=%{_libdir} python3 setup.py config_fc --fcompiler=gnu95 --noarch build
 popd
 %endif # with _python3
 
-env CFLAGS="$RPM_OPT_FLAGS" ATLAS=%{_libdir}/atlas FFTW=%{_libdir} BLAS=%{_libdir} LAPACK=%{_libdir} python setup.py config_fc --fcompiler=gnu95 --noarch build
+env CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-Wall -shared $RPM_LD_FLAGS" ATLAS=%{_libdir}/atlas FFTW=%{_libdir} BLAS=%{_libdir} LAPACK=%{_libdir} python setup.py config_fc --fcompiler=gnu95 --noarch build
 
 
 
@@ -115,11 +115,11 @@ rm -rf $RPM_BUILD_ROOT
 # first install python3 so the binaries are overwritten by the python2 ones
 %if 0%{?with_python3}
 pushd %{py3dir}
-env CFLAGS="$RPM_OPT_FLAGS" ATLAS=%{_libdir}/atlas FFTW=%{_libdir} BLAS=%{_libdir} LAPACK=%{_libdir} python3 setup.py install --root=$RPM_BUILD_ROOT
+env CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-Wall -shared $RPM_LD_FLAGS" ATLAS=%{_libdir}/atlas FFTW=%{_libdir} BLAS=%{_libdir} LAPACK=%{_libdir} python3 setup.py install --root=$RPM_BUILD_ROOT
 popd
 %endif # with_python3
 
-env CFLAGS="$RPM_OPT_FLAGS" ATLAS=%{_libdir}/atlas FFTW=%{_libdir} BLAS=%{_libdir} LAPACK=%{_libdir} python setup.py install --root=$RPM_BUILD_ROOT
+env CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-Wall -shared $RPM_LD_FLAGS" ATLAS=%{_libdir}/atlas FFTW=%{_libdir} BLAS=%{_libdir} LAPACK=%{_libdir} python setup.py install --root=$RPM_BUILD_ROOT
 
 
 %check
@@ -154,6 +154,15 @@ rm -rf $RPM_BUILD_ROOT
 %endif # with_python3
 
 %changelog
+* Mon Jan 08 2018 Nikola Forró <nforro@redhat.com> - 0.12.1-6
+- add missing build dependency on gcc-c++ (rhbz#1530965)
+
+* Fri Jan 05 2018 Nikola Forró <nforro@redhat.com> - 0.12.1-5
+- link with $RPM_LD_FLAGS to fix missing GNU_RELRO on ppc64(le)
+
+* Thu Jan 04 2018 Nikola Forró <nforro@redhat.com> - 0.12.1-4
+- rebuild against numpy-f2py >= 1.7.1-12 (rhbz#1531036)
+
 * Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 0.12.1-3
 - Mass rebuild 2014-01-24
 
