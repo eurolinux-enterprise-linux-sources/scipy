@@ -8,7 +8,7 @@
 Summary: Scipy: Scientific Tools for Python
 Name: scipy
 Version: 0.12.1
-Release: 1%{?dist}
+Release: 3%{?dist}
 
 Group: Development/Libraries
 # BSD -- whole package except:
@@ -154,6 +154,12 @@ rm -rf $RPM_BUILD_ROOT
 %endif # with_python3
 
 %changelog
+* Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 0.12.1-3
+- Mass rebuild 2014-01-24
+
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 0.12.1-2
+- Mass rebuild 2013-12-27
+
 * Wed Oct 16 2013 Tomas Tomecek <ttomecek@redhat.com> - 0.12.1-1
 - Update to 0.12.1 - fixes CVE-2013-4251 (rhbz#997579)
 - change working directory to build directory when building ext (rhbz#916695)
